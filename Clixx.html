@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clicker Game</title>
+</head>
+<body>
+    <canvas id="canvas1" width="640" height="480" style="border: 1px solid black; position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+    <canvas id="canvas2" width="640" height="480" style="border: 1px solid black; position: absolute; left: 0; top: 0; z-index: 0;"></canvas>
+    <script>  
+        
+        // Create Variables
+        var layer1 = document.getElementById("canvas1");
+        var dt1 = layer1.getContext("2d");
+        var layer2 = document.getElementById("canvas2");
+        var dt2 = layer2.getContext("2d");
+        var randomX = Math.floor(Math.random() * layer1.width) + 1;
+        var randomY = Math.floor(Math.random() * layer1.height) + 1;
+        var hitCount = 0;
+        var hitCount = parseInt(localStorage.getItem("tokenCG"));
+        var addClickDetection = true;
+        if(!hitCount) {
+            localStorage.setItem("tokenCG", 0);
+        }
+        var hitCountText = new String(hitCount);
+        var addClickDetection = true;
+
+        // Create Background
+        function drawBackground() {
+            dt1.fillStyle = "#003d59";
+            dt1.fillRect(0, 0, layer1.width, layer1.height);
+        }
+        drawBackground();
+
+        dt1.font = "100pt Impact";
+        dt1.fillStyle = "#2a876d";
+        dt1.fillText(hitCountText, 10, 120);
+
+        // Draw Target
+        function drawTarget() {
+            dt2.clearRect(0, 0, layer1.width, layer1.height);
+            dt2.fillStyle = "#9e1606";
+            dt2.strokeStyle = "black";
+            dt2.lineWidth = 4;
+            dt2.fillRect(randomX, randomY, 100, 100);
+            dt2.strokeRect(randomX, randomY, 100, 100);
+            dt2.fillStyle = "white";
+            dt2.lineWidth = 2;
+            dt2.fillRect(randomX + 15, randomY + 15, 70, 70);
+            dt2.strokeRect(randomX + 15, randomY + 15, 70, 70);
+            dt2.fillStyle = "#9e1606";
+            dt2.lineWidth = 1;
+            dt2.fillRect(randomX + 30, randomY + 30, 40, 40);
+            dt2.strokeRect(randomX + 30, randomY + 30, 40, 40);
+            while(randomX < 100 || randomX > layer1.width - 100) {
+                randomX = Math.floor(Math.random() * layer1.width) + 1;
+                drawTarget();
+            }
+            while(randomY < 100 || randomY > layer1.height - 100) {
+                randomY = Math.floor(Math.random() * layer1.height) + 1;
+                drawTarget();
+            }
+        }
+        drawTarget();
+
+        // Click Detection / Mouse Detection
+        document.addEventListener("mousemove", checkMouse);
+        function checkMouse() {
+            if(event.clientX > randomX && event.clientX < randomX + 100 && event.clientY > randomY && event.clientY < randomY + 100) {
+                addClickDetection = true;
+                jin = false;
+            }
+            else {
+                jin = true;
+            }
+            if(addClickDetection == true) {
+                document.addEventListener("click", checkClick);
+            }
+        }
+
+        function checkClick() {
+            if(jin == false) {
+            hitCount = parseInt(localStorage.getItem("tokenCG")) + 1;
+            localStorage.setItem("tokenCG", hitCount);
+            dt1.clearRect(0, 0, layer1.width, layer1.height);
+            drawBackground();
+            hitCountText = new String(hitCount);
+            dt1.font = "100pt Impact";
+            dt1.fillStyle = "#2a876d";
+            dt1.fillText(hitCountText, 10, 120);
+            randomX = Math.floor(Math.random() * layer1.width) + 1;
+            randomY = Math.floor(Math.random() * layer1.height) + 1;
+            drawTarget();
+            }
+            else if(jin == true) {
+                localStorage.setItem("tokenCG", 0);
+                location.reload();
+            }
+        }
+       
+    </script>
+</body>
+</html>
